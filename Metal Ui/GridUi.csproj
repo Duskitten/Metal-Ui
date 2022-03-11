@@ -56,11 +56,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MetalUi.cs" />
+    <Compile Include="GridUi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>echo f | xcopy /y /f "$(TargetDir)$(TargetFileName)" "X:\SteamLibrary\steamapps\common\NeosVR\nml_mods\DarkLogiXBrowser.dll"</PostBuildEvent>
+    <PostBuildEvent>echo f | xcopy /y /f "$(TargetDir)$(TargetFileName)" "X:\SteamLibrary\steamapps\common\NeosVR\nml_mods\Grid_Ui.dll"</PostBuildEvent>
   </PropertyGroup>
 </Project>

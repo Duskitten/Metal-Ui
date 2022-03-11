@@ -15,11 +15,11 @@ using FrooxEngine.LogiX.Operators;
 
 namespace Metal_Ui
 {
-    public class MetalUi
+    public class GridUi
     {
-        public class Metal_Ui : NeosMod
+        public class Grid_Ui : NeosMod
         {
-            public override string Name => "Metal Ui";
+            public override string Name => "Grid Ui";
             public override string Author => "EuphieEuphoria";
             public override string Version => "1.0";
 
@@ -33,8 +33,9 @@ namespace Metal_Ui
             static Uri buttonHoverEnterUri = new Uri("neosdb:///a8d42dd3b361127483dec673e934421ddfe3e29f9bad1e37f56e878a66fcf325");
             static Uri panelNormalMapUri = new Uri("neosdb:///95ef1fd8a153ad3d4c2588563274f961da94b812f90ffb4a235e624684c8e332");
             static Uri panelMSMapUri = new Uri("neosdb:///a38400e37e4e6b96d2e49557e0c7f614475edef637b2474f4c017f7e3f4971dc");
-            static Uri logixbackPanelAlbedoMapUri = new Uri("neosdb:///79e4969ec397d1d5de46cbc475b94725617351f0b1d559421b32670cc11a1d5a.png");
-            static Uri inspectorbackPanelAlbedoMapUri = new Uri("neosdb:///ffc927b7d2d7d63a4ce888e3aabea5ac7e746f0abe1b4cb69051b01278046a3e.png");
+            static Uri panelEmissionMapUri = new Uri("neosdb:///3fe2f2b15ced7ac27a9f634712a032aa403beace3076781d065cc42746a40cbe.webp");
+            static Uri logixbackPanelAlbedoMapUri = new Uri("neosdb:///9dc0e8d5ba585f33cfbf3113a8442fcdc121814f99117dcacc9c752be832fd99.png");
+            static Uri inspectorbackPanelAlbedoMapUri = new Uri("neosdb:///9dc0e8d5ba585f33cfbf3113a8442fcdc121814f99117dcacc9c752be832fd99.png");
 
             public override void OnEngineInit()
             {
@@ -140,8 +141,8 @@ namespace Metal_Ui
                         var HoverRelay = c.AttachComponent<ButtonHoverEventRelay>();
 
                         //Temporarily commented out due to annoyance
-                        PressRelay.Target.Target = ButtonSoundsSlot;
-                        HoverRelay.Target.Target = ButtonSoundsSlot;
+                        //PressRelay.Target.Target = ButtonSoundsSlot;
+                       // HoverRelay.Target.Target = ButtonSoundsSlot;
 
                     }
                 }
@@ -227,38 +228,31 @@ namespace Metal_Ui
                     //Get the ButtonAudioClipPlayer
                     var ButtonSounds = Sounds.GetComponent<ButtonAudioClipPlayer>();
                     //Create a new material so that we can make our node menu dark with it
-                    PBS_TriplanarMetallic NewPanelMat = AssetsSlot.AttachComponent<PBS_TriplanarMetallic>(true, null);
+                    PBS_TriplanarSpecular NewPanelMat = AssetsSlot.AttachComponent<PBS_TriplanarSpecular>(true, null);
                     //Get our awesome font
                     StaticFont staticFont = AssetsSlot.GetComponent<StaticFont>();
-                    //Making the static texture for the normal map
-                    StaticTexture2D panelNormalMap = AssetsSlot.AttachComponent<StaticTexture2D>(true, null);
-                    panelNormalMap.URL.Value = panelNormalMapUri;
-                    panelNormalMap.IsNormalMap.Value = true;
-                    panelNormalMap.CrunchCompressed.Value = false;
-                    panelNormalMap.PreferredFormat.Value = CodeX.TextureCompression.RawRGBA;
-                    panelNormalMap.FilterMode.Value = TextureFilterMode.Anisotropic;
-                    panelNormalMap.AnisotropicLevel.Value = 16;
-                    //Making the static texture for the MetallicSmoothness map
-                    StaticTexture2D panelMSMap = AssetsSlot.AttachComponent<StaticTexture2D>(true, null);
-                    panelMSMap.URL.Value = panelMSMapUri;
-                    panelMSMap.FilterMode.Value = TextureFilterMode.Anisotropic;
-                    panelMSMap.AnisotropicLevel.Value = 16;
+                    //Making the static texture for the Emission Map
+                    StaticTexture2D panelEmissionMap = AssetsSlot.AttachComponent<StaticTexture2D>(true, null);
+                    panelEmissionMap.URL.Value = panelEmissionMapUri;
+                    panelEmissionMap.CrunchCompressed.Value = false;
+                    panelEmissionMap.FilterMode.Value = TextureFilterMode.Point;
+                    panelEmissionMap.AnisotropicLevel.Value = 16;
+                   
 
                     //Set up values on the material that are dark, destroy the blur renderers and set the materials on all of the meshes to our dark one. Also set the title font to our awesome font
-                    NewPanelMat.AlbedoColor.Value = new color(0.7686275f, 0.7803922f, 0.7803922f, 1f);
-                    NewPanelMat.ObjectSpace.Value = true;
-                    NewPanelMat.NormalMap.Target = panelNormalMap;
-                    NewPanelMat.MetallicMap.Target = panelMSMap;
+                    NewPanelMat.AlbedoColor.Value = new color(0f, .31f, .32f, 1f);
+                    NewPanelMat.ObjectSpace.Value = false;
+                    NewPanelMat.EmissiveMap.Target = panelEmissionMap;
+                    NewPanelMat.EmissiveColor.Value = new color(.38f, .38f, .38f, 1f);
                     NewPanelMat.TextureScale.Value = new float2(4f, 4f);
 
 
-                    PBS_TriplanarMetallic gold = AssetsSlot.DuplicateComponent<PBS_TriplanarMetallic>(NewPanelMat, false);
-                    gold.AlbedoColor.Value = new color(1f, 0.89f, 0.61f, 1f);
+                    
                     slot.GetComponents<MeshRenderer>(null, false)[0].Material.Target = NewPanelMat;
                     slot.GetComponents<MeshRenderer>(null, false)[1].Destroy();
-                    HandleSlot.GetComponents<MeshRenderer>(null, false)[0].Material.Target = gold;
+                    HandleSlot.GetComponents<MeshRenderer>(null, false)[0].Material.Target = NewPanelMat;
                     HandleSlot.GetComponents<MeshRenderer>(null, false)[1].Destroy();
-                    TitleSlot.GetComponents<MeshRenderer>(null, false)[0].Material.Target = gold;
+                    TitleSlot.GetComponents<MeshRenderer>(null, false)[0].Material.Target = NewPanelMat;
                     TextRenderer textRenderer = TitleText.GetComponents<TextRenderer>(null, false)[0];
                     textRenderer.Font.Target = staticFont;
                     textRenderer.Color.Value = new color(1f, 1f, 1f, 1f);
@@ -285,8 +279,9 @@ namespace Metal_Ui
 
                     StaticTexture2D backSpriteTexture = AssetsSlot.AttachComponent<StaticTexture2D>(true, null);
                     backSpriteTexture.URL.Value = logixbackPanelAlbedoMapUri;
-                    backSpriteTexture.FilterMode.Value = TextureFilterMode.Anisotropic;
+                    backSpriteTexture.FilterMode.Value = TextureFilterMode.Point;
                     backSpriteTexture.AnisotropicLevel.Value = 16;
+                    backSpriteTexture.CrunchCompressed.Value = false;
                     UnlitMaterial backSpriteUnlit = AssetsSlot.AttachComponent<UnlitMaterial>(true, null);
                     backSpriteUnlit.Texture.Target = backSpriteTexture;
                     backSpriteUnlit.TintColor.Value = new color(1.25f, 1.25f, 1.25f, 1f);
@@ -318,7 +313,7 @@ namespace Metal_Ui
                     colorSaturation.Value.Value = .75f;
 
                     var colorValue = colorDriver.AttachComponent<ValueNode<float>>();
-                    colorValue.Value.Value = 1f;
+                    colorValue.Value.Value = 1.5f;
 
 
                     TMulti.A.Target = T;
@@ -352,10 +347,10 @@ namespace Metal_Ui
             {
                 static void Prefix(SceneInspector __instance)
                 {
-                    __instance.Slot.Name = "Fancy Metal Inspector";
+                    __instance.Slot.Name = "Grid Inspector";
 
                     Slot Assets = __instance.Slot.AddSlot("Assets");
-                    Assets.Tag = "MetalInspector.Assets";
+                    Assets.Tag = "GridInspector.Assets";
 
                     StaticFont staticFont = Assets.AttachFont(fontUri);
                     staticFont.GlyphEmSize.Value = 32;
@@ -372,51 +367,46 @@ namespace Metal_Ui
 
                 static void Postfix(InspectorPanel __instance, NeosPanel __result)
                 {
-                    if (__instance.Slot.Name != "Fancy Metal Inspector")
+                    if (__instance.Slot.Name != "Grid Inspector")
                         return;
 
                     Slot slot = __instance.Slot.FindChild(ch => ch.Name.Equals("Panel"), 1);
                     Slot HandleSlot = __instance.Slot.FindChild(ch => ch.Name.Equals("Handle"), 1);
                     Slot TitleSlot = __instance.Slot.FindChild(ch => ch.Name.Equals("Title Mesh"), 2);
                     Slot TitleText = __instance.Slot.FindChild(ch => ch.Name.Equals("Title"), 2);
-                    Slot AssetsSlot = __instance.Slot.FindChild(ch => ch.Tag.Equals("MetalInspector.Assets"));
-                    Slot ContentSlot = __instance.Slot.FindChild(ch => ch.Name.Equals("Image"), 1);
+                    Slot AssetsSlot = __instance.Slot.FindChild(ch => ch.Tag.Equals("GridInspector.Assets"));
+                    Slot ContentSlot = __instance.Slot.FindChild(ch => ch.Name.Equals("Content"), 1);
 
 
 
-                    PBS_TriplanarMetallic NewPanelMat = AssetsSlot.AttachComponent<PBS_TriplanarMetallic>(true, null);
+                    //Create a new material so that we can make our node menu dark with it
+                    PBS_TriplanarSpecular NewPanelMat = AssetsSlot.AttachComponent<PBS_TriplanarSpecular>(true, null);
                     //Get our awesome font
                     StaticFont staticFont = AssetsSlot.GetComponent<StaticFont>();
-                    //Making the static texture for the normal map
-                    StaticTexture2D panelNormalMap = AssetsSlot.AttachComponent<StaticTexture2D>(true, null);
-                    panelNormalMap.URL.Value = panelNormalMapUri;
-                    panelNormalMap.IsNormalMap.Value = true;
-                    panelNormalMap.CrunchCompressed.Value = false;
-                    panelNormalMap.PreferredFormat.Value = CodeX.TextureCompression.RawRGBA;
-                    panelNormalMap.FilterMode.Value = TextureFilterMode.Anisotropic;
-                    panelNormalMap.AnisotropicLevel.Value = 16;
-                    //Making the static texture for the MetallicSmoothness map
-                    StaticTexture2D panelMSMap = AssetsSlot.AttachComponent<StaticTexture2D>(true, null);
-                    panelMSMap.URL.Value = panelMSMapUri;
-                    panelMSMap.FilterMode.Value = TextureFilterMode.Anisotropic;
-                    panelMSMap.AnisotropicLevel.Value = 16;
+                    //Making the static texture for the Emission Map
+                    StaticTexture2D panelEmissionMap = AssetsSlot.AttachComponent<StaticTexture2D>(true, null);
+                    panelEmissionMap.URL.Value = panelEmissionMapUri;
+                    panelEmissionMap.CrunchCompressed.Value = false;
+                    panelEmissionMap.FilterMode.Value = TextureFilterMode.Point;
+                    panelEmissionMap.AnisotropicLevel.Value = 16;
 
-                    NewPanelMat.AlbedoColor.Value = new color(0.7686275f, 0.7803922f, 0.7803922f, 1f);
-                    NewPanelMat.ObjectSpace.Value = true;
-                    NewPanelMat.NormalMap.Target = panelNormalMap;
-                    NewPanelMat.MetallicMap.Target = panelMSMap;
+
+                    //Set up values on the material that are dark, destroy the blur renderers and set the materials on all of the meshes to our dark one. Also set the title font to our awesome font
+                    NewPanelMat.AlbedoColor.Value = new color(0f, .31f, .32f, 1f);
+                    NewPanelMat.ObjectSpace.Value = false;
+                    NewPanelMat.EmissiveMap.Target = panelEmissionMap;
+                    NewPanelMat.EmissiveColor.Value = new color(.38f, .38f, .38f, 1f);
                     NewPanelMat.TextureScale.Value = new float2(4f, 4f);
 
-                    PBS_TriplanarMetallic gold = AssetsSlot.DuplicateComponent<PBS_TriplanarMetallic>(NewPanelMat, false);
-                    gold.AlbedoColor.Value = new color(1f, 0.89f, 0.61f, 1f);
+                    
 
                     slot.GetComponents<MeshRenderer>(null, false)[0].Material.Target = NewPanelMat;
                     slot.GetComponents<MeshRenderer>(null, false)[1].Destroy();
 
-                    HandleSlot.GetComponents<MeshRenderer>(null, false)[0].Material.Target = gold;
+                    HandleSlot.GetComponents<MeshRenderer>(null, false)[0].Material.Target = NewPanelMat;
                     HandleSlot.GetComponents<MeshRenderer>(null, false)[1].Destroy();
 
-                    TitleSlot.GetComponents<MeshRenderer>(null, false)[0].Material.Target = gold;
+                    TitleSlot.GetComponents<MeshRenderer>(null, false)[0].Material.Target = NewPanelMat;
                     TextRenderer textRenderer = TitleText.GetComponents<TextRenderer>(null, false)[0];
                     textRenderer.Font.Target = staticFont;
                     textRenderer.Color.Value = new color(1f, 1f, 1f, 1f);
@@ -429,14 +419,18 @@ namespace Metal_Ui
                         Slot hierarchy = (AccessTools.Field(typeof(SceneInspector), "_hierarchyContentRoot").GetValue(inspector) as SyncRef<Slot>).Target;
                         Slot components = (AccessTools.Field(typeof(SceneInspector), "_componentsContentRoot").GetValue(inspector) as SyncRef<Slot>).Target;
 
-                        hierarchy.GetComponentsInParents<Image>()[1].Tint.Value = new color(.58f, .51f, .38f, .76f);
-                        components.GetComponentsInParents<Image>()[1].Tint.Value = new color(.36f, .52f, .52f, .76f);
+                        hierarchy.GetComponentsInParents<Image>()[1].Tint.Value = new color(.45f, .45f, .45f, .76f);
+                        components.GetComponentsInParents<Image>()[1].Tint.Value = new color(.23f, .23f, .23f, .76f);
+
+                        Canvas contentCanvas = ContentSlot.GetComponent<Canvas>(null, false);
+                        contentCanvas.Size.Value = new float2(2000f, 2000f);
                     });
 
                     StaticTexture2D backSpriteTexture = AssetsSlot.AttachComponent<StaticTexture2D>(true, null);
                     backSpriteTexture.URL.Value = inspectorbackPanelAlbedoMapUri;
-                    backSpriteTexture.FilterMode.Value = TextureFilterMode.Anisotropic;
+                    backSpriteTexture.FilterMode.Value = TextureFilterMode.Point;
                     backSpriteTexture.AnisotropicLevel.Value = 16;
+                    backSpriteTexture.CrunchCompressed.Value = false;
                     UnlitMaterial backSpriteUnlit = AssetsSlot.AttachComponent<UnlitMaterial>(true, null);
                     backSpriteUnlit.Texture.Target = backSpriteTexture;
                     backSpriteUnlit.TintColor.Value = new color(1.25f, 1.25f, 1.25f, 1f);
@@ -445,8 +439,8 @@ namespace Metal_Ui
 
                     Slot backSprite = slot.AddSlot("Back Panel Sprite");
                     QuadMesh coolBackMesh = backSprite.AttachMesh<QuadMesh>(backSpriteUnlit, false, 0);
-                    coolBackMesh.Size.Value = new float2(.4f, .4f);
-                    backSprite.LocalPosition = new float3(0f, 0f, .0053f);
+                    coolBackMesh.Size.Value = new float2(.6f, .6f);
+                    backSprite.LocalPosition = new float3(.3f, .28f, .0053f);
                     backSprite.LocalRotation = floatQ.Euler(0f, 180f, 0f);
 
                     Slot colorDriver = backSprite.AddSlot("Color Driver");
@@ -468,7 +462,7 @@ namespace Metal_Ui
                     colorSaturation.Value.Value = .75f;
 
                     var colorValue = colorDriver.AttachComponent<ValueNode<float>>();
-                    colorValue.Value.Value = 1f;
+                    colorValue.Value.Value = 1.5f;
 
 
                     TMulti.A.Target = T;
